@@ -285,15 +285,8 @@ class MarkdownCompiler():
         try:
             import subprocess
             shell_safe_json = data.decode('utf-8').replace('\"', '\\"').replace("`", "\\`")
-            curl_args = [
-                'curl',
-                '-H',
-                '"Content-Type: application/json"',
-                '-d',
-                '"' + shell_safe_json + '"',
-                'https://api.github.com/markdown'
-            ]
-            markdown_html = subprocess.Popen(curl_args, stdout=subprocess.PIPE).communicate()[0].decode('utf-8')
+            curl_cmd = 'curl -H "Content-Type: application/json" -d \"' + shell_safe_json + '\" https://api.github.com/markdown'
+            markdown_html = subprocess.Popen(curl_cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].decode('utf-8')
             return markdown_html
         except subprocess.CalledProcessError as e:
             sublime.error_message('cannot use github API to convert markdown. SSL is not included in your Python installation. And using curl didn\'t work either')
